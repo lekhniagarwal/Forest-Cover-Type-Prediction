@@ -1,0 +1,63 @@
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+import pandas as pd
+from sklearn import preprocessing
+
+
+dataset= pd.read_csv("G:/technical/python/forest_cover/train.csv")
+
+test= pd.read_csv("G:/technical/python/forest_cover/test.csv")
+
+
+target = dataset["Cover_Type"].values
+ids = test["Id"].values
+train = dataset
+
+#feature engineering
+
+train['Distance_To_Hydrology']=(train['Vertical_Distance_To_Hydrology']**2.0+
+                                 train['Horizontal_Distance_To_Hydrology']**2.0)**0.5
+test['Distance_To_Hydrology']=(test['Vertical_Distance_To_Hydrology']**2.0+
+                                 test['Horizontal_Distance_To_Hydrology']**2.0)**0.5
+
+
+
+
+#drop some redundant columns
+train.drop(["Id", "Vertical_Distance_To_Hydrology","Horizontal_Distance_To_Hydrology","Cover_Type"], axis=1, inplace=True)
+
+test.drop(["Id","Vertical_Distance_To_Hydrology","Horizontal_Distance_To_Hydrology"], axis=1, inplace=True)
+
+print("dv")
+         
+#train.info()     
+#colToScale=['Elevation','Aspect','Slope', 
+#             'Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 
+#            'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 
+#            'Horizontal_Distance_To_Fire_Points']
+#for col in colToScale:
+#   scaler = preprocessing.StandardScaler().fit(train[col].values.astype('float_'))
+#  train[col] = scaler.transform(train[col].values.astype('float_'))
+# test[col] = scaler.transform(test[col].values.astype('float_'))
+#Display the properties of some of the transformed features to confirm they now have mean=0 and std=1.
+#but dont need scale features for random forest
+#print(test.ix[:,1:6].describe())
+#After n_estimators=350 the cross-validation score begins to decrease again, so we will use 350.
+
+print("sdfvfsv1")
+model = RandomForestClassifier(random_state=0,n_estimators=350,max_features='sqrt',)
+print("sdfvfsv2")
+model.fit(train, target)
+print("sdfvfsv3")
+prediction = model.predict(test)
+print("sdfvfsv4")
+
+my_solution = pd.DataFrame({'Id':ids,'Cover_Type':prediction})
+
+
+
+my_solution.to_csv("G:/technical/python/forest_cover/randomforestclassifier.csv", index = False)
+
+
+
+print("sdfvfsv")
